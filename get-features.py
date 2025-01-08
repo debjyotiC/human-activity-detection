@@ -19,7 +19,6 @@ def calculate_rms(data):
 
 def median_absolute_deviation(data):
     median = np.median(data)
-    #     print(median)
     deviations = np.abs(data - median)
     return np.median(deviations)
 
