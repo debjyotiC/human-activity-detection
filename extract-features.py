@@ -6,9 +6,6 @@ import pandas as pd
 data_set_path = "Raw_data"
 targets = os.listdir(data_set_path)
 
-def calculate_rms(data):
-    return np.sqrt((data ** 2).mean())
-
 def compute_fall_features(data_frame):
     # Compute magnitudes
     accel_magnitude = np.sqrt(
@@ -25,22 +22,18 @@ def compute_fall_features(data_frame):
         np.abs(data_frame['accel-Z']).max()
     ])
 
-    # Zero Crossing Rate for accel-Z
-    zcr_accel_Z = ((data_frame['accel-Z'][:-1] * data_frame['accel-Z'][1:]) < 0).sum()
-
-    # Compute features
-    features = {
-        # Accelerometer features
+    # Compute ext_features
+    ext_features = {
+        # Accelerometer ext_features
         'max_accel_magnitude': accel_magnitude.max(),
         'min_accel_magnitude': accel_magnitude.min(),
-        'rms_accel_magnitude': calculate_rms(accel_magnitude),
         'mean_accel_Z': data_frame['accel-Z'].mean(),
         'std_accel_Z': data_frame['accel-Z'].std(),
         'range_accel_X': data_frame['accel-X'].max() - data_frame['accel-X'].min(),
         'range_accel_Y': data_frame['accel-Y'].max() - data_frame['accel-Y'].min(),
         'range_accel_Z': data_frame['accel-Z'].max() - data_frame['accel-Z'].min(),
 
-        # Gyroscope features
+        # Gyroscope ext_features
         'max_gyro_magnitude': gyro_magnitude.max(),
         'mean_gyro_X': data_frame['Gyro-X'].mean(),
         'mean_gyro_Y': data_frame['Gyro-Y'].mean(),
@@ -53,10 +46,9 @@ def compute_fall_features(data_frame):
 
         # Peak axis and ZCR
         'peak_axis': peak_axis,
-        'zcr_accel_Z': zcr_accel_Z,
     }
 
-    return features
+    return ext_features
 
 # Collect all features
 all_features = []

@@ -25,7 +25,8 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
+    tf.keras.layers.Input(shape=(X_train.shape[1],)),
+    tf.keras.layers.Dense(128, activation='relu'),
     tf.keras.layers.Dropout(0.3),
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dropout(0.3),
@@ -38,20 +39,16 @@ model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-history = model.fit(X_train, y_train, epochs=100, batch_size=16,
-                    validation_data=(X_test, y_test))
+history = model.fit(X_train, y_train, epochs=100, batch_size=16, validation_data=(X_test, y_test))
 
-# 9. Evaluate the model
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_accuracy:.4f}")
 
 y_pred = model.predict(X_test)
 y_pred_classes = np.argmax(y_pred, axis=1)
 
-# 2. Generate the confusion matrix
 cm = confusion_matrix(y_test, y_pred_classes)
 
-# 3. Plot the confusion matrix
 plt.figure(figsize=(10, 8))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
             xticklabels=label_encoder.classes_,
