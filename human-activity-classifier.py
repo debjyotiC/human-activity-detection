@@ -3,6 +3,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
 
 df = pd.read_csv('Features/features_all_classes.csv')
 
@@ -41,4 +44,20 @@ history = model.fit(X_train, y_train, epochs=100, batch_size=16,
 # 9. Evaluate the model
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_accuracy:.4f}")
+
+y_pred = model.predict(X_test)
+y_pred_classes = np.argmax(y_pred, axis=1)
+
+# 2. Generate the confusion matrix
+cm = confusion_matrix(y_test, y_pred_classes)
+
+# 3. Plot the confusion matrix
+plt.figure(figsize=(10, 8))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=label_encoder.classes_,
+            yticklabels=label_encoder.classes_)
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.title('Confusion Matrix')
+plt.show()
 
