@@ -2,9 +2,9 @@ import pandas as pd
 import os
 
 # Step 1: Define the main folder containing the subfolders with modified Excel files
-main_folder_path = "Features"  # Update with your main folder path
+main_folder_path = "../Features"  # Update with your main folder path
 output_folder = "excel_files"  # Update with your desired output folder path
-merged_file_path = "./"
+merged_file_path = "../"
 # Create the output folder if it doesn't exist
 os.makedirs(output_folder, exist_ok=True)
 

@@ -1,35 +1,44 @@
-import tensorflow as tf
-from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+import tensorflow as tf
 
-# Specify Data Path and assign it to a variable
-file_path = "fall_20_feature_train_data.xlsx" #provide path of your data. Source could be either on your local machine or internet
-data = pd.read_excel(file_path)
+df = pd.read_csv('Features/features_all_classes.csv')
 
-X = data.iloc[:,:-1].values
-Y = data.iloc[::,-1].values
+X = df.drop(columns=['Label']).values
+y = df['Label'].values
 
-Y = tf.keras.utils.to_categorical(Y, num_classes=2)
+label_encoder = LabelEncoder()
+y_encoded = label_encoder.fit_transform(y)
 
-X = np.array(X)
-X = X.reshape(Y.shape[0],1,20,1)  #X,Y
+classes = len(np.unique(y_encoded))
 
-X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.30,random_state=42,stratify=Y)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
 
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
+)
 
-# Define the model
-model = tf.keras.models.Sequential()
-model.add(tf.keras.layers.Conv2D(20, kernel_size=(3,3),strides=1, activation='relu', input_shape=(1,20,1),data_format="channels_first",padding='same'))
-model.add(tf.keras.layers.MaxPooling2D(pool_size=(3,3),data_format="channels_first"))
-model.add(tf.keras.layers.Flatten())
-model.add(tf.keras.layers.Dense(20, activation='relu'))
-model.add(tf.keras.layers.Dropout(0.3))
-model.add(tf.keras.layers.Dense(2, activation='softmax'))
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
+    tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Dense(classes, activation='softmax')
+])
+
 model.summary()
 
-model.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=tf.keras.optimizers.Adam(),metrics=['accuracy'])
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
 
-model.fit(X_train, Y_train, batch_size=20, epochs=20, verbose=True, validation_data=(X_test, Y_test))
+history = model.fit(X_train, y_train, epochs=100, batch_size=16,
+                    validation_data=(X_test, y_test))
 
-model.save("har.model") #final model
+# 9. Evaluate the model
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+print(f"Test Accuracy: {test_accuracy:.4f}")
+

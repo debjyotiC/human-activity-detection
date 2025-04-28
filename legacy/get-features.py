@@ -6,8 +6,8 @@ import argparse
 import shutil
 
 # Step 1: Define the main folder containing the subfolders with Excel files
-main_folder_path = "Dataset/Raw_data"  # Update with your main folder path
-output_base_path = "Features"  # Update with your desired output base path
+main_folder_path = "Raw_data"  # Update with your main folder path
+output_base_path = "../Features"  # Update with your desired output base path
 
 os.makedirs(output_base_path, exist_ok=True)
 
