@@ -22,6 +22,9 @@ def compute_fall_features(data_frame):
         np.abs(data_frame['accel-Z']).max()
     ])
 
+    # Zero Crossing Rate for accel-Z
+    zcr_accel_Z = ((data_frame['accel-Z'][:-1] * data_frame['accel-Z'][1:]) < 0).sum()
+
     # Compute ext_features
     ext_features = {
         # Accelerometer ext_features
@@ -46,6 +49,7 @@ def compute_fall_features(data_frame):
 
         # Peak axis and ZCR
         'peak_axis': peak_axis,
+        'zcr_accel_Z': zcr_accel_Z,
     }
 
     return ext_features
