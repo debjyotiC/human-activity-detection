@@ -21,13 +21,12 @@ scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
+    X_scaled, y_encoded, test_size=0.3, random_state=42, stratify=y_encoded
 )
 
 model = tf.keras.models.Sequential([
     tf.keras.layers.Input(shape=(X_train.shape[1],)),
     tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dropout(0.3),
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dropout(0.3),
     tf.keras.layers.Dense(classes, activation='softmax')
@@ -39,7 +38,7 @@ model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-history = model.fit(X_train, y_train, epochs=100, batch_size=16, validation_data=(X_test, y_test))
+history = model.fit(X_train, y_train, epochs=100, batch_size=10, validation_data=(X_test, y_test))
 
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
 print(f"Test Accuracy: {test_accuracy:.4f}")
