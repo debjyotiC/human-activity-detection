@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # 1. Load data
-file_path = "Raw_Data/HAR_mag_8x1 1.xlsx"
+file_path = "../Raw_Data/HAR_mag_8x1 1.xlsx"
 df = pd.read_excel(file_path)
 
 # 2. Split X/Y and balance

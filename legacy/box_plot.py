@@ -3,7 +3,7 @@ import seaborn as sns
 import pandas as pd
 
 # Load the uploaded Excel file
-file_path = "Raw_Data/HAR_mag_8x1 1.xlsx"
+file_path = "../Raw_Data/HAR_mag_8x1 1.xlsx"
 df = pd.read_excel(file_path)
 
 plt.figure(figsize=(10, 6))
