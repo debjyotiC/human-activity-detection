@@ -26,9 +26,21 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 print(X_train.shape, y_train.shape)
 
+# model = tf.keras.models.Sequential([
+#     tf.keras.layers.Input(shape=(X_train.shape[1],)),
+#     tf.keras.layers.Dense(128, activation='relu'),
+#     tf.keras.layers.Dense(64, activation='relu'),
+#     tf.keras.layers.Dropout(0.3),
+#     tf.keras.layers.Dense(classes, activation='softmax')
+# ])
+
+X_train_cnn = X_train.reshape(-1, 19, 1, 1)
+X_test_cnn = X_test.reshape(-1, 19, 1, 1)
+
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Input(shape=(X_train.shape[1],)),
-    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Conv2D(32, kernel_size=(3,1), strides=1, activation='relu', input_shape=(19, 1, 1), padding='same'),
+    tf.keras.layers.Conv2D(32, kernel_size=(3,1), strides=1, activation='relu', padding='same'),
+    tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dropout(0.3),
     tf.keras.layers.Dense(classes, activation='softmax')
@@ -40,12 +52,12 @@ model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-history = model.fit(X_train, y_train, epochs=100, batch_size=10, validation_data=(X_test, y_test))
+history = model.fit(X_train_cnn, y_train, epochs=100, batch_size=10, validation_data=(X_test_cnn, y_test))
 
-test_loss, test_accuracy = model.evaluate(X_test, y_test)
+test_loss, test_accuracy = model.evaluate(X_test_cnn, y_test)
 print(f"Test Accuracy: {test_accuracy:.4f}")
 
-y_pred = model.predict(X_test)
+y_pred = model.predict(X_test_cnn)
 y_pred_classes = np.argmax(y_pred, axis=1)
 
 cm = confusion_matrix(y_test, y_pred_classes)
@@ -57,5 +69,6 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
 plt.xlabel('Predicted')
 plt.ylabel('True')
 plt.title('Confusion Matrix')
+plt.savefig("images/cm.png", dpi=300)
 plt.show()
 
